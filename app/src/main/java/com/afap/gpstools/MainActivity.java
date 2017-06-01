@@ -1,5 +1,9 @@
 package com.afap.gpstools;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,8 +17,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.afap.gpstools.utils.LogUtil;
+
+import java.util.Calendar;
+import java.util.Collections;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener , SensorEventListener {
+    private final static String TAG = "MainActivity";
+
+    private SensorManager sensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +52,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL, 60000);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL, 60000);
+
     }
 
     @Override
@@ -97,5 +116,46 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    private float mX, mY, mZ;
+    private long lasttimestamp = 0;
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        LogUtil.d(TAG, "onSensorChanged----->");
+
+        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+
+
+        } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x =   event.values[0];
+            float y =   event.values[1];
+            float z =   event.values[2];
+            Calendar mCalendar = Calendar.getInstance();
+            long stamp = mCalendar.getTimeInMillis();
+
+
+            int second = mCalendar.get(Calendar.SECOND);// 53
+
+            float px = Math.abs(mX - x);
+            float py = Math.abs(mY - y);
+            float pz = Math.abs(mZ - z);
+            LogUtil.d(TAG, "pX:" + px + "  pY:" + py + "  pZ:" + pz + "    stamp:"
+                    + stamp + "  second:" + second);
+
+            mX = x;
+            mY = y;
+            mZ = z;
+        }
+
+
+//        SensorManager.getOrientation()
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        LogUtil.i(TAG, "onAccuracyChanged:" + sensor.getName() + ",accuracy=" + accuracy);
     }
 }
