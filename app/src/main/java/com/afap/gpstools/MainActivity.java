@@ -1,12 +1,23 @@
 package com.afap.gpstools;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.GnssStatus;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,8 +35,11 @@ import android.widget.TextView;
 import com.afap.gpstools.utils.LogUtil;
 import com.afap.gpstools.widget.CompassView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
@@ -74,7 +88,92 @@ public class MainActivity extends AppCompatActivity
         mfSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
 
+        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    ActivityCompat#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for ActivityCompat#requestPermissions for more details.
+//                return;
+//            }
+//            LogUtil.d(TAG, "GnssStatus");
+//            locationManager.registerGnssStatusCallback(new GnssStatus.Callback() {
+//                @Override
+//                public void onStarted() {
+//                    super.onStarted();
+//                    LogUtil.d(TAG, "GnssStatus：onStarted");
+//                }
+//
+//
+//                @Override
+//                public void onSatelliteStatusChanged(GnssStatus status) {
+//                    super.onSatelliteStatusChanged(status);
+//
+////                    int num = status.getSatelliteCount();
+////                    LogUtil.d(TAG, "数量：" + num);
+////                    for (int i = 0; i < num; i++) {
+////                        String info = "卫星信息：\n信噪：" + status.getCn0DbHz(i);
+////                        info += "\n高度：" + status.getElevationDegrees(i);
+////                        LogUtil.d(TAG, info);
+////                    }
+//
+//
+//                }
+//
+//
+//            });
+//        } else {
+        locationManager.addGpsStatusListener(new GpsStatus.Listener() {
+            @Override
+            public void onGpsStatusChanged(int event) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+
+                GpsStatus status = locationManager.getGpsStatus(null);
+
+
+                StringBuilder sb2 = new StringBuilder("");
+                if (status == null) {
+                    sb2.append("搜索到卫星个数：" + 0);
+                } else if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
+                    int maxSatellites = status.getMaxSatellites();
+                    Iterator<GpsSatellite> it = status.getSatellites().iterator();
+                    numSatelliteList.clear();
+                    int count = 0;
+                    while (it.hasNext() && count <= maxSatellites) {
+                        GpsSatellite s = it.next();
+                        numSatelliteList.add(s);
+
+
+
+                        count++;
+                    }
+                    sb2.append("搜索到卫星个数：" + numSatelliteList.size());
+                    compassView.updateGpsSatellite(numSatelliteList);
+                }
+
+                LogUtil.d(TAG, sb2.toString());
+
+            }
+        });
+//        }
+
+
     }
+
+    private List<GpsSatellite> numSatelliteList = new ArrayList<GpsSatellite>(); // 卫星信号
 
     @Override
     protected void onResume() {
@@ -154,9 +253,26 @@ public class MainActivity extends AppCompatActivity
     private float[] magneticFieldValues = new float[3];
 
 
+    /**
+     * ********╲*******Y️
+     * *********╲*****⬆️
+     * **********╲****|**********
+     * ***********╲***|**********
+     * ************╲**|**********
+     * *************╲*|**********
+     * **************╲|**********
+     * ------------------------------> X （手机宽度 左--右）
+     * ***************|╲*********
+     * ***************|*╲********
+     * ***************|**╲*******
+     * ***************|***╲******
+     * ***************|****╲*****
+     * ***************|*****╲****
+     * ***************|******╲***
+     * ***************|*******Z**（手机平放时朝上方向）
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
-        LogUtil.d(TAG, "onSensorChanged----->");
 
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             magneticFieldValues = event.values;
@@ -179,7 +295,7 @@ public class MainActivity extends AppCompatActivity
         info += "\n[X]Pitch:" + values[1];
         info += "\n[Y]Pitch:" + values[2];
 
-        LogUtil.i(TAG, info);
+//        LogUtil.i(TAG, info);
 
 //        if (values[0] >= -5 && values[0] < 5) {
 //            tv_info_detail.setText("正北");
@@ -229,7 +345,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        compassView.startAnimation(animate);
+//        compassView.startAnimation(animate);
 
 
     }
@@ -238,4 +354,42 @@ public class MainActivity extends AppCompatActivity
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         LogUtil.i(TAG, "onAccuracyChanged:" + sensor.getName() + ",accuracy=" + accuracy);
     }
+
+
+//    /**
+//     * 卫星状态监听器
+//     */
+//    private List<GpsSatellite> numSatelliteList = new ArrayList<GpsSatellite>(); // 卫星信号
+//
+//    private final GpsStatus.Listener statusListener = new GpsStatus.Listener() {
+//        public void onGpsStatusChanged(int event) { // GPS状态变化时的回调，如卫星数
+//
+//            GpsStatus status = locationManager.getGpsStatus(null); //取当前状态
+//            String satelliteInfo = updateGpsStatus(event, status);
+//            tv_satellites.setText(null);
+//            tv_satellites.setText(satelliteInfo);
+//        }
+//    };
+//
+//    private String updateGpsStatus(int event, GpsStatus status) {
+//        StringBuilder sb2 = new StringBuilder("");
+//        if (status == null) {
+//            sb2.append("搜索到卫星个数：" + 0);
+//        } else if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
+//            int maxSatellites = status.getMaxSatellites();
+//            Iterator<GpsSatellite> it = status.getSatellites().iterator();
+//            numSatelliteList.clear();
+//            int count = 0;
+//            while (it.hasNext() && count <= maxSatellites) {
+//                GpsSatellite s = it.next();
+//                numSatelliteList.add(s);
+//                count++;
+//            }
+//            sb2.append("搜索到卫星个数：" + numSatelliteList.size());
+//        }
+//
+//        return sb2.toString();
+//    }
+
+
 }

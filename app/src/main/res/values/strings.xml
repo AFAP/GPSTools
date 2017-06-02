@@ -13,11 +13,12 @@
     <string name="north">北</string>
 
 
-
-
-
-
-
+    <array name="directions">
+        <item>北</item>
+        <item>东</item>
+        <item>南</item>
+        <item>西</item>
+    </array>
 
 
 </resources>
