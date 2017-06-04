@@ -13,11 +13,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp">
 
+        <com.afap.gpstools.widget.LevelView
+            android:id="@+id/levelView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"/>
+
         <com.afap.gpstools.widget.CompassView
             android:id="@+id/compassView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp" />
+            android:padding="20dp"/>
     </RelativeLayout>
 
     <TextView

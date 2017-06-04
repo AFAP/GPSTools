@@ -4,9 +4,9 @@
     <string name="action_settings">Settings</string>
 
 
-    <string name="azimuth_f">[Z]方位角：%f</string>
-    <string name="pitch_f">[X]倾斜角度：%f</string>
-    <string name="roll_f">[Y]翻滚角度：%f</string>
+
+
+
 
 
     <array name="directions">

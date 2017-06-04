@@ -32,8 +32,10 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.TextView;
 
+import com.afap.gpstools.R;
 import com.afap.gpstools.utils.LogUtil;
 import com.afap.gpstools.widget.CompassView;
+import com.afap.gpstools.widget.LevelView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity
 
     private int width_compass = 0;
     private CompassView compassView;
+    private LevelView levelView;
+
     private TextView tv_info_detail;
 
 
@@ -81,6 +85,14 @@ public class MainActivity extends AppCompatActivity
 
         tv_info_detail = (TextView) findViewById(R.id.info_detail);
         compassView = (CompassView) findViewById(R.id.compassView);
+        levelView = (LevelView) findViewById(R.id.levelView);
+        compassView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                levelView.setRadius(compassView.getRadius());
+            }
+        }, 100);
+
         width_compass = compassView.getWidth();
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -90,7 +102,8 @@ public class MainActivity extends AppCompatActivity
 
         final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+// PackageManager.PERMISSION_GRANTED) {
 //                // TODO: Consider calling
 //                //    ActivityCompat#requestPermissions
 //                // here to request the missing permissions, and then overriding
@@ -130,7 +143,8 @@ public class MainActivity extends AppCompatActivity
         locationManager.addGpsStatusListener(new GpsStatus.Listener() {
             @Override
             public void onGpsStatusChanged(int event) {
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -157,7 +171,6 @@ public class MainActivity extends AppCompatActivity
                         numSatelliteList.add(s);
 
 
-
                         count++;
                     }
                     sb2.append("搜索到卫星个数：" + numSatelliteList.size());
@@ -178,8 +191,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, aSensor, SensorManager.SENSOR_DELAY_NORMAL, 400000);
-        sensorManager.registerListener(this, mfSensor, SensorManager.SENSOR_DELAY_NORMAL, 400000);
+        sensorManager.registerListener(this, aSensor, SensorManager.SENSOR_DELAY_NORMAL, 16000);
+        sensorManager.registerListener(this, mfSensor, SensorManager.SENSOR_DELAY_NORMAL, 16000);
     }
 
     @Override
@@ -276,24 +289,26 @@ public class MainActivity extends AppCompatActivity
 
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             magneticFieldValues = event.values;
-
+            return;
         } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             accelerometerValues = event.values;
         }
         float[] values = new float[3];
-        float[] R = new float[9];
+        float[] rotation = new float[9];
 
-        SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticFieldValues);
-        SensorManager.getOrientation(R, values);
+        SensorManager.getRotationMatrix(rotation, null, accelerometerValues, magneticFieldValues);
+        SensorManager.getOrientation(rotation, values);
 
 
         values[0] = (float) Math.toDegrees(values[0]);
-        values[1] = (float) Math.toDegrees(values[1]);
-        values[2] = (float) Math.toDegrees(values[2]);
+//        values[1] = (float) Math.toDegrees(values[1]);
+//        values[2] = (float) Math.toDegrees(values[2]);
 
-        String info = "[Z]Azimuth:" + values[0];
-        info += "\n[X]Pitch:" + values[1];
-        info += "\n[Y]Pitch:" + values[2];
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(getString(R.string.azimuth_f, values[0]));
+        sb.append("\n" + getString(R.string.pitch_f, Math.toDegrees(values[1])));
+        sb.append("\n" + getString(R.string.roll_f, Math.toDegrees(values[2])));
 
 //        LogUtil.i(TAG, info);
 
@@ -323,12 +338,12 @@ public class MainActivity extends AppCompatActivity
 //            tv_info_detail.setText("西北");
 //        }
 
-        tv_info_detail.setText(info);
+        tv_info_detail.setText(sb.toString());
 
         RotateAnimation animate;
         animate = new RotateAnimation(v0, values[0], 540, 540);
         v0 = values[0];
-        animate.setDuration(100);
+        animate.setDuration(500);
         animate.setFillAfter(true);
         animate.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -346,7 +361,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 //        compassView.startAnimation(animate);
-
+        levelView.updateXY(values[1], values[2]);
 
     }
 

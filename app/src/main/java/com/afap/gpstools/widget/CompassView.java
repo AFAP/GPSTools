@@ -33,7 +33,7 @@ public class CompassView extends View {
 
     private Canvas mCanvas;
     private List<GpsSatellite> gpsSatellites; // 卫星列表
-
+    private float r;
 
     public CompassView(Context context) {
         super(context);
@@ -102,10 +102,10 @@ public class CompassView extends View {
 
         int w = getMeasuredWidth();
 
-        float o_x = getLeft() + w / 2; // 圆心-X
-        float o_y = getTop() + w / 2; // 圆心-Y
+        float o_x = w / 2; // 圆心-X
+        float o_y = w / 2; // 圆心-Y
         float r0 = w / 2 - size_text - margin_circle;
-        float r = r0 - size_text_degree;
+        r = r0 - size_text_degree;
 
 
         canvas.translate(o_x, o_y); // 移动原点到圆心位置
@@ -184,10 +184,12 @@ public class CompassView extends View {
         gpsSatellites = satellites;
 
         postInvalidate();
-
-
     }
 
+
+    public float getRadius() {
+        return r;
+    }
 
     private float dp2px(Context context, float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
