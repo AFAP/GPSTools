@@ -9,6 +9,10 @@
     <string name="roll_f">[Y]翻滚角度：%f</string>
 
 
+    <string name="permission_access_fine_location">Please go to the settings to allow the application to access the location</string>
+
+
+
     <array name="directions">
         <item>北</item>
         <item>东</item>

@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
-import com.afap.gpstools.MainActivity;
 import com.afap.gpstools.R;
 import com.afap.gpstools.utils.LogUtil;
+import com.afap.utils.ToastUtil;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import rx.Observer;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * 启动缓冲页面
@@ -31,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
         RxPermissions rxPermissions = new RxPermissions(this); // where this is an Activity instance
 
         rxPermissions
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .request(Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onNext(Boolean aBoolean) {
@@ -41,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                         } else {
-                            T.showShort(R.string.permission_write_external_storage);
+                            ToastUtil.showShort(R.string.permission_access_fine_location);
                         }
                     }
 
