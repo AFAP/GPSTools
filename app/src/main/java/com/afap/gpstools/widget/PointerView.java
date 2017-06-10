@@ -11,10 +11,13 @@ import android.view.View;
 
 import com.afap.gpstools.utils.LogUtil;
 
+
 /**
  * 指针
  */
 public class PointerView extends View {
+    private float azimuth = 0.0f;
+
     public PointerView(Context context) {
         super(context);
     }
@@ -29,6 +32,7 @@ public class PointerView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(widthMeasureSpec, widthMeasureSpec);
     }
 
@@ -40,6 +44,7 @@ public class PointerView extends View {
 
         int w = getMeasuredWidth();
         canvas.translate(w / 2, w / 2); // 移动原点到中心位置
+        canvas.rotate(azimuth);
 
         float h = w * 0.36f;
         float r = w * 0.04f;
@@ -67,5 +72,10 @@ public class PointerView extends View {
         canvas.drawPath(path, paint);
     }
 
+    public void updateAzimuth(float azimuth) {
+        this.azimuth = azimuth;
+
+        postInvalidate();
+    }
 
 }

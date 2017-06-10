@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.location.GpsSatellite;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -48,37 +47,10 @@ public class CompassView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-
-    private int getMySize(int defaultSize, int measureSpec) {
-        int mySize = defaultSize;
-
-        int mode = MeasureSpec.getMode(measureSpec);
-        int size = MeasureSpec.getSize(measureSpec);
-
-        switch (mode) {
-            case MeasureSpec.UNSPECIFIED: {//如果没有指定大小，就设置为默认大小
-                mySize = defaultSize;
-                break;
-            }
-            case MeasureSpec.AT_MOST: {//如果测量模式是最大取值为size
-                //我们将大小取最大值,你也可以取其他值
-                mySize = size;
-                break;
-            }
-            case MeasureSpec.EXACTLY: {//如果是固定的大小，那就不要去改变它
-                mySize = size;
-                break;
-            }
-        }
-        return mySize;
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = getMySize(100, widthMeasureSpec);
-
-        setMeasuredDimension(width, width);
+        setMeasuredDimension(widthMeasureSpec, widthMeasureSpec);
     }
 
     @Override
@@ -86,76 +58,76 @@ public class CompassView extends View {
         super.onDraw(canvas);
         LogUtil.d("CompassView", "onDraw");
 
-            Context context = getContext();
+        Context context = getContext();
 
-            String[] directions = context.getResources().getStringArray(R.array.directions);
-
-
-            float size_text = sp2px(context, SIZI_TEXT_SP);
-            size_text_degree = sp2px(context, SIZI_TEXT_DEGREE_SP);
-
-            float margin_circle = dp2px(context, MARGIN_CIRCLE_DP);
-            point_o_r = dp2px(context, POINT_O_R);
-            size_border = dp2px(context, SIZE_BORDER);
-            float size_line = dp2px(context, SIZE_LINE);
-
-            int w = getMeasuredWidth();
-
-            float o_x = w / 2; // 圆心-X
-            float o_y = w / 2; // 圆心-Y
-            float r0 = w / 2 - size_text - margin_circle;
-            r = r0 - size_text_degree * 1.2f;
+        String[] directions = context.getResources().getStringArray(R.array.directions);
 
 
-            canvas.translate(o_x, o_y); // 移动原点到圆心位置
+        float size_text = sp2px(context, SIZI_TEXT_SP);
+        size_text_degree = sp2px(context, SIZI_TEXT_DEGREE_SP);
+
+        float margin_circle = dp2px(context, MARGIN_CIRCLE_DP);
+        point_o_r = dp2px(context, POINT_O_R);
+        size_border = dp2px(context, SIZE_BORDER);
+        float size_line = dp2px(context, SIZE_LINE);
+
+        int w = getMeasuredWidth();
+
+        float o_x = w / 2; // 圆心-X
+        float o_y = w / 2; // 圆心-Y
+        float r0 = w / 2 - size_text - margin_circle;
+        r = r0 - size_text_degree * 1.2f;
 
 
-            Paint paint = new Paint();
-            paint.setColor(Color.BLACK);
-            paint.setAntiAlias(true); //去除锯齿
-            canvas.drawCircle(0, 0, point_o_r, paint);
-            paint.setStyle(Paint.Style.STROKE); //设置空心
-            paint.setStrokeWidth(size_border);
-            // 最外围的圆圈
-            canvas.drawCircle(0, 0, r0, paint);
-            //内侧圆圈使用虚线显示
-            paint.setPathEffect(new DashPathEffect(new float[]{16, 8}, 0));
+        canvas.translate(o_x, o_y); // 移动原点到圆心位置
 
-            canvas.drawCircle(0, 0, r, paint);
-            canvas.drawCircle(0, 0, r * 0.66f, paint);
-            canvas.drawCircle(0, 0, r * 0.33f, paint);
 
-            paint.setStrokeWidth(size_line);
-            canvas.drawLine(-r, 0, r, 0, paint);
-            canvas.drawLine(0, -r, 0, r, paint);
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setAntiAlias(true); //去除锯齿
+        canvas.drawCircle(0, 0, point_o_r, paint);
+        paint.setStyle(Paint.Style.STROKE); //设置空心
+        paint.setStrokeWidth(size_border);
+        // 最外围的圆圈
+        canvas.drawCircle(0, 0, r0, paint);
+        //内侧圆圈使用虚线显示
+        paint.setPathEffect(new DashPathEffect(new float[]{16, 8}, 0));
 
-            // 旋转至正北方向，开始绘制角度虚线和角度值
+        canvas.drawCircle(0, 0, r, paint);
+        canvas.drawCircle(0, 0, r * 0.66f, paint);
+        canvas.drawCircle(0, 0, r * 0.33f, paint);
+
+        paint.setStrokeWidth(size_line);
+        canvas.drawLine(-r, 0, r, 0, paint);
+        canvas.drawLine(0, -r, 0, r, paint);
+
+        // 旋转至正北方向，开始绘制角度虚线和角度值
 //        canvas.rotate(-90);
-            paint.setPathEffect(new DashPathEffect(new float[]{6, 3}, 0));
+        paint.setPathEffect(new DashPathEffect(new float[]{6, 3}, 0));
 
-            Paint fontPaint = new Paint();
-            fontPaint.setColor(Color.BLACK);
-            fontPaint.setAntiAlias(true);//去除锯齿
+        Paint fontPaint = new Paint();
+        fontPaint.setColor(Color.BLACK);
+        fontPaint.setAntiAlias(true);//去除锯齿
 
-            for (int i = 0; i < 12; i++) {
-                if (i % 3 == 0) {
-                    fontPaint.setTextSize(size_text);
-                    String direction = directions[i / 3];
-                    canvas.drawText(direction, -fontPaint.measureText(direction) / 2, -o_y + size_text, fontPaint);
-                }
-                fontPaint.setTextSize(size_text_degree);
-                canvas.drawLine(0, 0, r, 0, paint);
-                String degree = "" + 30 * i;
-                canvas.drawText(degree, -fontPaint.measureText(degree) / 2, -r - 0.3f * size_text_degree, fontPaint);
-
-                canvas.rotate(30 * 1);
+        for (int i = 0; i < 12; i++) {
+            if (i % 3 == 0) {
+                fontPaint.setTextSize(size_text);
+                String direction = directions[i / 3];
+                canvas.drawText(direction, -fontPaint.measureText(direction) / 2, -o_y + size_text, fontPaint);
             }
+            fontPaint.setTextSize(size_text_degree);
+            canvas.drawLine(0, 0, r, 0, paint);
+            String degree = "" + 30 * i;
+            canvas.drawText(degree, -fontPaint.measureText(degree) / 2, -r - 0.3f * size_text_degree, fontPaint);
 
-            canvas.save();
+            canvas.rotate(30 * 1);
+        }
 
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.FILL);
-            finishi = true;
+        canvas.save();
+
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        finishi = true;
 
 
         if (gpsSatellites == null || gpsSatellites.size() == 0) {

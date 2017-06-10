@@ -31,6 +31,7 @@ import com.afap.gpstools.R;
 import com.afap.gpstools.utils.LogUtil;
 import com.afap.gpstools.widget.CompassView;
 import com.afap.gpstools.widget.LevelView;
+import com.afap.gpstools.widget.PointerView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     private int width_compass = 0;
     private CompassView compassView;
     private LevelView levelView;
+    private PointerView pointerView;
 
     private TextView tv_info_detail;
 
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity
         tv_info_detail = (TextView) findViewById(R.id.info_detail);
         compassView = (CompassView) findViewById(R.id.compassView);
         levelView = (LevelView) findViewById(R.id.levelView);
+        pointerView = (PointerView) findViewById(R.id.pointerView);
         compassView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -294,8 +297,6 @@ public class MainActivity extends AppCompatActivity
 
 
         values[0] = (float) Math.toDegrees(values[0]);
-//        values[1] = (float) Math.toDegrees(values[1]);
-//        values[2] = (float) Math.toDegrees(values[2]);
 
 
         StringBuffer sb = new StringBuffer();
@@ -332,28 +333,7 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         tv_info_detail.setText(sb.toString());
-
-        RotateAnimation animate;
-        animate = new RotateAnimation(v0, values[0], 540, 540);
-        v0 = values[0];
-        animate.setDuration(500);
-        animate.setFillAfter(true);
-        animate.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-//        compassView.startAnimation(animate);
+        pointerView.updateAzimuth(values[0]);
         levelView.updateXY(values[1], values[2]);
 
     }
