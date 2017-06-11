@@ -40,11 +40,10 @@ public class PointerView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        LogUtil.d("PointerView", "onDraw");
 
         int w = getMeasuredWidth();
         canvas.translate(w / 2, w / 2); // 移动原点到中心位置
-        canvas.rotate(azimuth);
+        canvas.rotate(-azimuth);
 
         float h = w * 0.36f;
         float r = w * 0.04f;

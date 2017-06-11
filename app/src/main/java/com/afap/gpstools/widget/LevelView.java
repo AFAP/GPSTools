@@ -56,13 +56,9 @@ public class LevelView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        LogUtil.d("CompassView", "onDraw");
         if (radius == 0) {
             return;
         }
-
-        Context context = getContext();
-
 
         int w = getMeasuredWidth();
         float offset_y = (float) (radius_compass * Math.sin(pitch));

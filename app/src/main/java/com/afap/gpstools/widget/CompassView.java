@@ -56,8 +56,6 @@ public class CompassView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        LogUtil.d("CompassView", "onDraw");
-
         Context context = getContext();
 
         String[] directions = context.getResources().getStringArray(R.array.directions);
@@ -146,7 +144,7 @@ public class CompassView extends View {
 
             canvas.drawCircle(x, y, point_o_r, paint);
 
-            LogUtil.d("cc", "snr:" + pnr + "\nelevation:" + elevation);
+            LogUtil.d("CompassView", "snr:" + pnr + "\nelevation:" + elevation);
         }
 
     }

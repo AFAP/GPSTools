@@ -9,7 +9,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,8 +26,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.TextView;
 
 import com.afap.gpstools.R;
@@ -45,7 +46,6 @@ public class MainActivity extends AppCompatActivity
     private Sensor aSensor; // 加速度传感器
     private Sensor mfSensor; // 地磁传感器
 
-    private int width_compass = 0;
     private CompassView compassView;
     private LevelView levelView;
     private PointerView pointerView;
@@ -60,14 +60,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -89,65 +81,18 @@ public class MainActivity extends AppCompatActivity
             }
         }, 100);
 
-        width_compass = compassView.getWidth();
-
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         aSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mfSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
 
         final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-// PackageManager.PERMISSION_GRANTED) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return;
-//            }
-//            LogUtil.d(TAG, "GnssStatus");
-//            locationManager.registerGnssStatusCallback(new GnssStatus.Callback() {
-//                @Override
-//                public void onStarted() {
-//                    super.onStarted();
-//                    LogUtil.d(TAG, "GnssStatus：onStarted");
-//                }
-//
-//
-//                @Override
-//                public void onSatelliteStatusChanged(GnssStatus status) {
-//                    super.onSatelliteStatusChanged(status);
-//
-////                    int num = status.getSatelliteCount();
-////                    LogUtil.d(TAG, "数量：" + num);
-////                    for (int i = 0; i < num; i++) {
-////                        String info = "卫星信息：\n信噪：" + status.getCn0DbHz(i);
-////                        info += "\n高度：" + status.getElevationDegrees(i);
-////                        LogUtil.d(TAG, info);
-////                    }
-//
-//
-//                }
-//
-//
-//            });
-//        } else {
+
         locationManager.addGpsStatusListener(new GpsStatus.Listener() {
             @Override
             public void onGpsStatusChanged(int event) {
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
 
@@ -177,7 +122,32 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-//        }
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            LogUtil.i(TAG, "xxxxxxxxxxxxxxxxxxxx:"  );
+        }
+        LocationProvider gpsProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);//1.通过GPS定位，较精确，也比较耗电
+        LocationProvider netProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);//2.通过网络定位，对定位精度度不高或省点情况可考虑使用
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0f, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                LogUtil.i(TAG, "onLocationChanged:" + location.toString()  );
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                LogUtil.i(TAG, "onStatusChanged:" + provider.toString()  );
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                LogUtil.i(TAG, "onProviderEnabled:" + provider.toString()  );
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                LogUtil.i(TAG, "onProviderDisabled:" + provider.toString()  );
+            }
+        });
 
 
     }
@@ -210,19 +180,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
