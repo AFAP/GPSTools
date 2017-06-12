@@ -9,6 +9,19 @@
     <string name="roll_f">[Y]翻滚角度：%f</string>
 
 
+    <string name="latitude_f">纬度：%.6f</string>
+    <string name="longitude_f">经度：%.6f</string>
+    <string name="altitude_f">海拔：%.6f</string>
+    <string name="acuracy_f">精度：%.0f</string>
+
+
+
+
+
+
+
+
+
     <string name="permission_access_fine_location">Please go to the settings to allow the application to access the location</string>
 
 

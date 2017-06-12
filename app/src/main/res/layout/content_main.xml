@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,28 +20,36 @@
             <com.afap.gpstools.widget.LevelView
                 android:id="@+id/levelView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <com.afap.gpstools.widget.CompassView
                 android:id="@+id/compassView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <com.afap.gpstools.widget.PointerView
                 android:id="@+id/pointerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/info_detail"
+            android:id="@+id/info_location"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/black_1"
             android:textSize="11sp"
-            tools:text="Hello World!"/>
+            tools:text="Hello World!" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/info_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/black_1"
+        android:textSize="11sp"
+        tools:text="Hello World!" />
 
 </LinearLayout>

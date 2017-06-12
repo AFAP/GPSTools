@@ -46,11 +46,13 @@ public class MainActivity extends AppCompatActivity
     private Sensor aSensor; // 加速度传感器
     private Sensor mfSensor; // 地磁传感器
 
+    private Location lastLocation;
+
     private CompassView compassView;
     private LevelView levelView;
     private PointerView pointerView;
 
-    private TextView tv_info_detail;
+    private TextView tv_info_detail, tv_info_location;
 
 
     @Override
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        tv_info_location = (TextView) findViewById(R.id.info_location);
         tv_info_detail = (TextView) findViewById(R.id.info_detail);
         compassView = (CompassView) findViewById(R.id.compassView);
         levelView = (LevelView) findViewById(R.id.levelView);
@@ -122,34 +125,53 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            LogUtil.i(TAG, "xxxxxxxxxxxxxxxxxxxx:"  );
+        lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (lastLocation == null) {
+            lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
-        LocationProvider gpsProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);//1.通过GPS定位，较精确，也比较耗电
-        LocationProvider netProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);//2.通过网络定位，对定位精度度不高或省点情况可考虑使用
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0f, new LocationListener() {
+        updateLocation(lastLocation);
+        LogUtil.i(TAG, "xxxxxxx:" + lastLocation.toString());
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0.1f, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                LogUtil.i(TAG, "onLocationChanged:" + location.toString()  );
+                LogUtil.i(TAG, "onLocationChanged:" + location.toString());
+                // onLocationChanged:Location[network 32.049877,118.814529 acc=61 et=+6d0h46m19s701ms {Bundle[mParcelledData.dataSize=92]}]
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                LogUtil.i(TAG, "onStatusChanged:" + provider.toString()  );
+                LogUtil.i(TAG, "onStatusChanged:" + provider.toString());
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-                LogUtil.i(TAG, "onProviderEnabled:" + provider.toString()  );
+                LogUtil.i(TAG, "onProviderEnabled:" + provider.toString());
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                LogUtil.i(TAG, "onProviderDisabled:" + provider.toString()  );
+                LogUtil.i(TAG, "onProviderDisabled:" + provider.toString());
             }
         });
 
 
+    }
+
+    /**
+     * 更新地理位置
+     *
+     * @param location
+     */
+    private void updateLocation(Location location) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getString(R.string.latitude_f, location.getLatitude()));
+        sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));
+        sb.append("\n" + getString(R.string.altitude_f, location.getAltitude()));
+        sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));
+        sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));
+        sb.append("\n" + getString(R.string.altitude_f, location.getAltitude()));
+        sb.append("\n" + getString(R.string.acuracy_f, location.getAccuracy()));
+        tv_info_location.setText(sb.toString());
     }
 
     private List<GpsSatellite> numSatelliteList = new ArrayList<GpsSatellite>(); // 卫星信号

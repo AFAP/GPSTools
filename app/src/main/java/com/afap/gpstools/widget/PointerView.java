@@ -9,8 +9,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.afap.gpstools.utils.LogUtil;
-
 
 /**
  * 指针
@@ -49,7 +47,7 @@ public class PointerView extends View {
         float r = w * 0.04f;
 
         Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
+        paint.setColor(Color.RED);
         paint.setAlpha(164);
         paint.setAntiAlias(true); //去除锯齿
         paint.setStyle(Paint.Style.FILL); //设置空心
@@ -66,7 +64,7 @@ public class PointerView extends View {
         path.lineTo(r, 0);
 
 
-        paint.setColor(Color.RED);
+        paint.setColor(Color.BLUE);
         paint.setAlpha(164);
         canvas.drawPath(path, paint);
     }
