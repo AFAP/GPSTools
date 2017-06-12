@@ -135,7 +135,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onLocationChanged(Location location) {
                 LogUtil.i(TAG, "onLocationChanged:" + location.toString());
-                // onLocationChanged:Location[network 32.049877,118.814529 acc=61 et=+6d0h46m19s701ms {Bundle[mParcelledData.dataSize=92]}]
+                // onLocationChanged:Location[network 32.049877,118.814529 acc=61 et=+6d0h46m19s701ms
+                // {Bundle[mParcelledData.dataSize=92]}]
             }
 
             @Override
@@ -167,14 +168,15 @@ public class MainActivity extends AppCompatActivity
         sb.append(getString(R.string.latitude_f, location.getLatitude()));
         sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));
         sb.append("\n" + getString(R.string.altitude_f, location.getAltitude()));
-        sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));
-        sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));
-        sb.append("\n" + getString(R.string.altitude_f, location.getAltitude()));
         sb.append("\n" + getString(R.string.acuracy_f, location.getAccuracy()));
+        sb.append("\n" + getString(R.string.provider_f, location.getProvider()));
+        sb.append("\n" + getString(R.string.spead_f, location.getSpeed()));
+        sb.append("\n" + getString(R.string.provider_f, location.getProvider()));
+        sb.append("\n" + getString(R.string.provider_f, location.getProvider()));
         tv_info_location.setText(sb.toString());
     }
 
-    private List<GpsSatellite> numSatelliteList = new ArrayList<GpsSatellite>(); // 卫星信号
+    private List<GpsSatellite> numSatelliteList = new ArrayList<>(); // 卫星信号
 
     @Override
     protected void onResume() {
