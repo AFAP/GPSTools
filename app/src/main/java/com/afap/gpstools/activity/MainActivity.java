@@ -2,6 +2,7 @@ package com.afap.gpstools.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -39,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
+        implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
     private final static String TAG = "MainActivity";
 
     private SensorManager sensorManager;
@@ -241,6 +242,16 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_record:
+                Intent intent = new Intent(this, RecordActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
 
