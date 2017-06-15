@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity
             lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
         updateLocation(lastLocation);
-        LogUtil.i(TAG, "xxxxxxx:" + lastLocation.toString());
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0.1f, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -165,6 +164,9 @@ public class MainActivity extends AppCompatActivity
      * @param location
      */
     private void updateLocation(Location location) {
+        if (location == null) {
+            return;
+        }
         StringBuffer sb = new StringBuffer();
         sb.append(getString(R.string.latitude_f, location.getLatitude()));
         sb.append("\n" + getString(R.string.longitude_f, location.getLongitude()));

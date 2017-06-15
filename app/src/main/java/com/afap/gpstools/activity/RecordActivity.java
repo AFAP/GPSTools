@@ -3,6 +3,7 @@ package com.afap.gpstools.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class RecordActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class RecordActivity extends AppCompatActivity implements OnClickListener, LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -64,11 +66,23 @@ public class RecordActivity extends AppCompatActivity implements LoaderCallbacks
     private View mProgressView;
     private View mLoginFormView;
 
+
+    private ImageView img_mark_red, img_mark_green, img_mark_blue, img_mark_yellow, img_mark_orange;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
-        // Set up the login form.
+
+
+        img_mark_red = (ImageView) findViewById(R.id.img_mark_red);
+        img_mark_green = (ImageView) findViewById(R.id.img_mark_green);
+        img_mark_blue = (ImageView) findViewById(R.id.img_mark_blue);
+        img_mark_yellow = (ImageView) findViewById(R.id.img_mark_yellow);
+        img_mark_orange = (ImageView) findViewById(R.id.img_mark_orange);
+
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -76,10 +90,6 @@ public class RecordActivity extends AppCompatActivity implements LoaderCallbacks
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
                 return false;
             }
         });
@@ -94,6 +104,20 @@ public class RecordActivity extends AppCompatActivity implements LoaderCallbacks
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.img_mark_red:
+            case R.id.img_mark_green:
+            case R.id.img_mark_blue:
+            case R.id.img_mark_yellow:
+            case R.id.img_mark_orange:
+                v.setSelected(!v.isSelected());
+                break;
+        }
     }
 
     private void populateAutoComplete() {

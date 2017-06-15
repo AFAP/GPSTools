@@ -17,4 +17,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <!--记录标记点的样式-->
+    <style name="Mark">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:background">@drawable/bg_mark_selected</item>
+        <item name="android:padding">3dp</item>
+        <item name="android:layout_margin">3dp</item>
+    </style>
+
+
 </resources>

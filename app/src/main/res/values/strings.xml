@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">GPSTools</string>
     <string name="record">记录</string>
+    <string name="mark">标记</string>
 
     <string name="action_settings">Settings</string>
 
@@ -16,6 +17,14 @@
     <string name="acuracy_f">精度：%.0f</string>
     <string name="provider_f">来源：%s</string>
     <string name="spead_f">来源：%.0f</string>
+
+
+
+
+    <string name="prompt_record_title">记录名称</string>
+    <string name="prompt_record_lat_lon">经纬度(lat,lon)</string>
+
+
 
 
     <string name="permission_access_fine_location">Please go to the settings to allow the application to access the location</string>
