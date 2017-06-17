@@ -27,5 +27,14 @@
         <item name="android:layout_margin">3dp</item>
     </style>
 
+    <!--记录中添加图片的样式-->
+    <style name="ImageAdd">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
 
 </resources>

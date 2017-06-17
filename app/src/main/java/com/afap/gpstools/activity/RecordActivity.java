@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,9 +39,6 @@ import com.afap.gpstools.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class RecordActivity extends AppCompatActivity implements OnClickListener, LoaderCallbacks<Cursor> {
 
     /**
@@ -68,7 +66,7 @@ public class RecordActivity extends AppCompatActivity implements OnClickListener
 
 
     private ImageView img_mark_red, img_mark_green, img_mark_blue, img_mark_yellow, img_mark_orange;
-
+    private GridLayout gridLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +79,27 @@ public class RecordActivity extends AppCompatActivity implements OnClickListener
         img_mark_blue = (ImageView) findViewById(R.id.img_mark_blue);
         img_mark_yellow = (ImageView) findViewById(R.id.img_mark_yellow);
         img_mark_orange = (ImageView) findViewById(R.id.img_mark_orange);
+
+        gridLayout = (GridLayout) findViewById(R.id.gridLayout);
+        View c = View.inflate(this,R.layout.atom_img_add,null);
+
+
+
+        GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams( );
+        layoutParams.
+
+
+
+
+
+        gridLayout.addView(View.inflate(this,R.layout.atom_img_add,null),layoutParams);
+        gridLayout.addView(View.inflate(this,R.layout.atom_img_add,null),layoutParams);
+        gridLayout.addView(View.inflate(this,R.layout.atom_img_add,null),layoutParams);
+        gridLayout.addView(View.inflate(this,R.layout.atom_img_add,null),layoutParams);
+        gridLayout.addView(View.inflate(this,R.layout.atom_img_add,null),layoutParams);
+
+
+
 
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
