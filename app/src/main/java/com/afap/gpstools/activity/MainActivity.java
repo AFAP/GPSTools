@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity
         sb.append("\n" + getString(R.string.spead_f, location.getSpeed()));
         sb.append("\n" + getString(R.string.provider_f, location.getProvider()));
         sb.append("\n" + getString(R.string.provider_f, location.getProvider()));
+
         tv_info_location.setText(sb.toString());
     }
 
